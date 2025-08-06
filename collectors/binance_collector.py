@@ -14,6 +14,7 @@ async def collect_binance_trades(pair="btcusdt", min_usd=VOLUME_THRESHOLD):
             price = float(data["p"])
             quantity = float(data["q"])
             volume = price * quantity
+            side = "Sell" if data["m"] else "Buy"
 
             if volume >= min_usd:
                 log_trade({
@@ -22,5 +23,6 @@ async def collect_binance_trades(pair="btcusdt", min_usd=VOLUME_THRESHOLD):
                     "price": price,
                     "quantity": quantity,
                     "volume_usdt": volume,
-                    "timestamp": data["T"]
+                    "timestamp": data["T"],
+                    "side": side
                 })

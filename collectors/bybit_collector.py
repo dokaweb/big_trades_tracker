@@ -23,6 +23,7 @@ async def collect_bybit_trades(pair="BTCUSDT", min_usd=VOLUME_THRESHOLD):
                     price = float(trade["p"])
                     quantity = float(trade["v"])
                     volume = price * quantity
+                    side = trade["S"]
                     if volume >= min_usd:
                         log_trade({
                             "exchange": "ByBit",
@@ -30,5 +31,6 @@ async def collect_bybit_trades(pair="BTCUSDT", min_usd=VOLUME_THRESHOLD):
                             "price": price,
                             "quantity": quantity,
                             "volume_usdt": volume,
-                            "timestamp": trade["T"]
+                            "timestamp": trade["T"],
+                            "side": side
                         })
