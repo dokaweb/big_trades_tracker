@@ -2,9 +2,9 @@ import asyncio
 import json
 import websockets
 from storage.logger import log_trade
-from config import VOLUME_THRESHOLD
+import config
 
-async def collect_bybit_trades(pair="BTCUSDT", min_usd=VOLUME_THRESHOLD):
+async def collect_bybit_trades(pair="BTCUSDT", min_usd=config.VOLUME_THRESHOLD):
     url = "wss://stream.bybit.com/v5/public/linear"
     async with websockets.connect(url) as ws:
         sub_msg = {
@@ -24,7 +24,11 @@ async def collect_bybit_trades(pair="BTCUSDT", min_usd=VOLUME_THRESHOLD):
                     quantity = float(trade["v"])
                     volume = price * quantity
                     side = trade["S"]
+
                     if volume >= min_usd:
+                        if config.FILTER_SIDE != "All" and side != config.FILTER_SIDE:
+                            continue  # Фильтруем по направлению
+
                         log_trade({
                             "exchange": "ByBit",
                             "symbol": pair,

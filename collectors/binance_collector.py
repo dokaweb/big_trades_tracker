@@ -2,9 +2,9 @@ import asyncio
 import json
 import websockets
 from storage.logger import log_trade
-from config import VOLUME_THRESHOLD
+import config
 
-async def collect_binance_trades(pair="btcusdt", min_usd=VOLUME_THRESHOLD):
+async def collect_binance_trades(pair="btcusdt", min_usd=config.VOLUME_THRESHOLD):
     url = f"wss://fstream.binance.com/ws/{pair}@aggTrade"
     async with websockets.connect(url) as ws:
         print(f"[BINANCE] Listening on {pair.upper()}")
@@ -17,6 +17,9 @@ async def collect_binance_trades(pair="btcusdt", min_usd=VOLUME_THRESHOLD):
             side = "Sell" if data["m"] else "Buy"
 
             if volume >= min_usd:
+                if config.FILTER_SIDE != "All" and side != config.FILTER_SIDE:
+                    continue  # Фильтруем по направлению
+
                 log_trade({
                     "exchange": "Binance",
                     "symbol": pair.upper(),
