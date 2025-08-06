@@ -2,8 +2,9 @@ import asyncio
 import json
 import websockets
 from storage.logger import log_trade
+from config import VOLUME_THRESHOLD
 
-async def collect_bybit_trades(pair="BTCUSDT", min_usd=100_000):
+async def collect_bybit_trades(pair="BTCUSDT", min_usd=VOLUME_THRESHOLD):
     url = "wss://stream.bybit.com/v5/public/linear"
     async with websockets.connect(url) as ws:
         sub_msg = {

@@ -2,8 +2,9 @@ import asyncio
 import json
 import websockets
 from storage.logger import log_trade
+from config import VOLUME_THRESHOLD
 
-async def collect_binance_trades(pair="btcusdt", min_usd=100_000):
+async def collect_binance_trades(pair="btcusdt", min_usd=VOLUME_THRESHOLD):
     url = f"wss://fstream.binance.com/ws/{pair}@aggTrade"
     async with websockets.connect(url) as ws:
         print(f"[BINANCE] Listening on {pair.upper()}")
